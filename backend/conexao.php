@@ -1,18 +1,13 @@
 <?php
-$servername = "";
-$username = "root";
-$password = "Senha123";
-$database = "meubanco";
+$host = 'mysql-local';   // nome do Service no Kubernetes
+$user = 'myuser';
+$pass = 'mypassword';
+$db   = 'mydatabase';
 
-// Criar conexão
+$conn = new mysqli($host, $user, $pass, $db);
 
-
-$link = new mysqli($servername, $username, $password, $database);
-
-/* check connection */
-if (mysqli_connect_errno()) {
-    printf("Connect failed: %s\n", mysqli_connect_error());
-    exit();
+if ($conn->connect_error) {
+    die("Erro de conexão: " . $conn->connect_error);
 }
 
-?>
+$conn->set_charset("utf8mb4");

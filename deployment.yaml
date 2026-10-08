@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-local
+  labels:
+    app: mysql-local
+spec:
+  selector:
+    matchLabels:
+      app: mysql-local
+  template:
+    metadata:
+      labels:
+        app: mysql-local
+    spec:
+      containers:
+        - name: mysql-local
+          image: edy1901/projeto-database:1.0
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "rootpassword"
+            - name: MYSQL_DATABASE
+              value: "mydatabase"
+            - name: MYSQL_USER
+              value: "myuser"
+            - name: MYSQL_PASSWORD
+              value: "mypassword"
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: local
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: local
+          persistentVolumeClaim:
+            claimName: local
+            
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+  labels:
+    app: backend
+spec:
+  replicas: 6
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata: 
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: edy1901/projeto-backend:1.0
+          imagePullPolicy: Always
+          env:
+            - name: DB_HOST
+              value: "mysql-local"
+            - name: DB_USER
+              value: "myuser"
+            - name: DB_PASSWORD
+              value: "mypassword"
+            - name: DB_NAME
+              value: "mydatabase" 
+          ports:
+            - containerPort: 80
+
+            
